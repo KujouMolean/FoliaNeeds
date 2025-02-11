@@ -1,4 +1,4 @@
-package com.molean.isletopia.ignite.mixin.bugfix.conversation;
+package com.molean.folia.needs.mixin.fix.conversation;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.Connection;

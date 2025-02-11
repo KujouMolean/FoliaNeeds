@@ -1,2 +1,4 @@
-package com.molean.folia.needs;public class FoliaNeeds {
+package com.molean.folia.needs;
+
+public class FoliaNeeds {
 }

@@ -1,4 +1,4 @@
-package com.molean.isletopia.ignite.mixin.bugfix.conversation;
+package com.molean.folia.needs.mixin.fix.conversation;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InactivityConversationCanceller.class)
-public abstract class FixConversationsAPI {
+public abstract class InactivityConversationCancellerMixin {
     private ScheduledTask scheduledTask;
 
     @Shadow protected Plugin plugin;

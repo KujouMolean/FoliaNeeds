@@ -1,11 +1,11 @@
 {
-  "id": "isletopia_ignite",
+  "id": "folia_needs",
   "version": "${version}",
   "wideners": [
-    "main.accesswidener"
+    "folia_needs.accesswidener"
   ],
   "mixins": [
-    "main.mixins.json"
+    "folia_needs.mixins.json"
   ]
 
 }

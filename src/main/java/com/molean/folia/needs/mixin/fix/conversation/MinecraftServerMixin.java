@@ -1,4 +1,4 @@
-package com.molean.isletopia.ignite.mixin.bugfix.conversation;
+package com.molean.folia.needs.mixin.fix.conversation;
 
 import io.papermc.paper.threadedregions.TickRegions;
 import net.minecraft.server.MinecraftServer;
