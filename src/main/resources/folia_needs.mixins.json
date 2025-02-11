@@ -1,0 +1,43 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.molean.isletopia.ignite.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "access.BlockPosAccessor",
+    "bugfix.FixAsyncPlayerTick",
+    "bugfix.RegionShutdownThread",
+    "bugfix.TeleportSpawnReason",
+    "bugfix.conversation.FixConversationsAPI",
+    "bugfix.conversation.MinecraftServerMixin",
+    "bugfix.conversation.ServerGamePacketListenerImplMixin",
+    "control.ChannelingStrike_LightningRodBlock",
+    "control.ChannelingStrike_ThrownTrident",
+    "control.NoShrinkBlock_BlockItem",
+    "control.PlayerShouldInRain_Entity",
+    "control.TempPotionEffect_LivingEntity",
+    "modifer.Heal",
+    "modify.MoreChairs_ArmorStand",
+    "performance.ReplaceLevelRandom",
+    "poster.CatGiftGiveEvent_Cat",
+    "poster.CreeperExplodeRemoveEvent_Creeper",
+    "poster.EndermiteSpawnEvent_ThrownEnderpearl",
+    "poster.ItemTickEvent_ItemEntity",
+    "poster.LivingEntityEvent_LivingEntity",
+    "poster.LoginPositionPoster",
+    "poster.NonLivingEntityRemovedByVoidEvent_Entity",
+    "poster.PlayerCheckTotemDeathProtectionEvent_LivingEntity",
+    "poster.PlayerTickEvent_ServerPlayer",
+    "poster.ReceivePacketEvent_Connection",
+    "poster.RespawnedEvent_ServerPlayer",
+    "poster.SendPacketEvent_ServerGamePacketListenerImpl",
+    "preventcrash.DisablePlayerNameCheck",
+    "preventcrash.LevelMixin",
+    "preventcrash.PaperEventManagerMixin",
+    "preventcrash.TickThreadMixin",
+    "track.TrackingRangeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

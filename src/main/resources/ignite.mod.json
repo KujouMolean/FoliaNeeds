@@ -1,0 +1,11 @@
+{
+  "id": "isletopia_ignite",
+  "version": "${version}",
+  "wideners": [
+    "main.accesswidener"
+  ],
+  "mixins": [
+    "main.mixins.json"
+  ]
+
+}
