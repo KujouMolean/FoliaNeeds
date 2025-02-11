@@ -1,22 +1,23 @@
 package com.molean.folia.needs.mixin.poster;
 
-import ca.spottedleaf.concurrentutil.completable.CallbackCompletable;
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+
+import java.util.function.Consumer;
 
 @Mixin(ServerPlayer.class)
 public abstract class PlayerPostRespawnEventPoster {
     @Shadow
     public abstract CraftPlayer getBukkitEntity();
 
-    @Redirect(method = "lambda$respawn$29", at = @At(value = "INVOKE", target = "Lca/spottedleaf/concurrentutil/completable/CallbackCompletable;complete(Ljava/lang/Object;)V"))
-    public void on(CallbackCompletable instance, Object result) {
-        instance.complete(result);
+    @ModifyVariable(index = 1, method = "respawn(Ljava/util/function/Consumer;Lorg/bukkit/event/player/PlayerRespawnEvent$RespawnReason;)V", at = @At("HEAD"), argsOnly = true)
+    public Consumer<ServerPlayer> on(Consumer<ServerPlayer> value) {
         new PlayerPostRespawnEvent(getBukkitEntity(), getBukkitEntity().getLocation(), false).callEvent();
+        return value;
     }
 }

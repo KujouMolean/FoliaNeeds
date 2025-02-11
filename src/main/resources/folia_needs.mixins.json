@@ -4,6 +4,7 @@
   "package": "com.molean.folia.needs.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "poster.PlayerPostRespawnEventMixin",
     "poster.PlayerPostRespawnEventPoster",
     "poster.TeleportAsyncCallEventPoster"
   ],
