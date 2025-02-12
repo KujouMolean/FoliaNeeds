@@ -24,8 +24,7 @@ repositories {
 }
 
 dependencies {
-//    paperweight.foliaDevBundle("1.21.4-R0.1-SNAPSHOT")
-    paperweight.foliaDevBundle("1.21.4-R0.1-SNAPSHOT","me.earthme.luminol")
+    paperweight.foliaDevBundle("1.21.4-R0.1-SNAPSHOT")
 
     compileOnly("space.vectrix.ignite:ignite-api:1.0.1")
     compileOnly("org.spongepowered:mixin:0.8.5")

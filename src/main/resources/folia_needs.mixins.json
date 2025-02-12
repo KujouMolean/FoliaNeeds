@@ -4,6 +4,9 @@
   "package": "com.molean.folia.needs.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "fix.conversation.InactivityConversationCancellerMixin",
+    "fix.conversation.MinecraftServerMixin",
+    "fix.conversation.ServerGamePacketListenerImplMixin",
     "poster.PlayerPostRespawnEventMixin",
     "poster.PlayerPostRespawnEventPoster",
     "poster.TeleportAsyncCallEventPoster"
