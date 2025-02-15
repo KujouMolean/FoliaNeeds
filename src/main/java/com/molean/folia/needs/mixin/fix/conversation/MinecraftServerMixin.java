@@ -13,12 +13,15 @@ import java.util.function.BooleanSupplier;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
-    @Shadow public Queue<Runnable> processQueue;
+    @Shadow
+    public Queue<Runnable> processQueue;
 
     @Inject(method = "tickChildren", at = @At("HEAD"))
     public void on(BooleanSupplier shouldKeepTicking, TickRegions.TickRegionData region, CallbackInfo ci) {
-        while (!this.processQueue.isEmpty()) { // Folia - region threading
-            this.processQueue.remove().run();
+        synchronized (processQueue) {
+            while (!this.processQueue.isEmpty()) { // Folia - region threading
+                this.processQueue.remove().run();
+            }
         }
     }
 }
