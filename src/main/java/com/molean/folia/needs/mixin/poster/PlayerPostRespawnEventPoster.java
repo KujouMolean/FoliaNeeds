@@ -15,6 +15,7 @@ public abstract class PlayerPostRespawnEventPoster {
     @Shadow
     public abstract CraftPlayer getBukkitEntity();
 
+    //做一个简单的call，满足插件的基本功能实现。
     @ModifyVariable(index = 1, method = "respawn(Ljava/util/function/Consumer;Lorg/bukkit/event/player/PlayerRespawnEvent$RespawnReason;)V", at = @At("HEAD"), argsOnly = true)
     public Consumer<ServerPlayer> on(Consumer<ServerPlayer> value) {
         new PlayerPostRespawnEvent(getBukkitEntity(), getBukkitEntity().getLocation(), false).callEvent();

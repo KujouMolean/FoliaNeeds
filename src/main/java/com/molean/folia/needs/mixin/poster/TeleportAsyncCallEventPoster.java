@@ -28,7 +28,7 @@ public abstract class TeleportAsyncCallEventPoster {
         return value.clone();
     }
 
-
+    //做一个简单的call，满足插件的基本功能实现。
     @Inject(method = "teleportAsync", at = @At(value = "HEAD"))
     public void callEvent(Location location, PlayerTeleportEvent.TeleportCause cause, TeleportFlag[] teleportFlags, CallbackInfoReturnable<CompletableFuture<Boolean>> cir) {
         EntityTeleportEvent entityTeleportEvent = new EntityTeleportEvent((Entity) (Object) this, getLocation(), location.clone());

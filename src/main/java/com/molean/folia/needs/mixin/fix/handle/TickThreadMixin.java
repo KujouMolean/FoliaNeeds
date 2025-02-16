@@ -11,9 +11,13 @@ import java.util.Arrays;
 
 @Mixin(TickThread.class)
 public class TickThreadMixin {
+
+
+    // 移除过度检查，在PacketLevel需要经常getHandle，仅读取数据，而不作写入，所以去掉检查基本上不影响。
+
     @Inject(method = "ensureTickThread*", at = @At("HEAD"), cancellable = true)
     private static void on(Entity entity, String reason, CallbackInfo ci) {
-        if (Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(stackTraceElement -> stackTraceElement.getMethodName().equals("getHandle"))) {
+        if (reason.equals("Accessing entity state off owning region's thread")) {
             ci.cancel();
         }
     }

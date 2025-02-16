@@ -24,10 +24,13 @@ import java.util.function.Function;
 
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin extends Level {
+
+
     protected ServerLevelMixin(WritableLevelData worlddatamutable, ResourceKey<Level> resourcekey, RegistryAccess iregistrycustom, Holder<DimensionType> holder, boolean flag, boolean flag1, long i, int j, ChunkGenerator gen, BiomeProvider biomeProvider, World.Environment env, Function<SpigotWorldConfig, WorldConfiguration> paperWorldConfigCreator, Executor executor) {
         super(worlddatamutable, resourcekey, iregistrycustom, holder, flag, flag1, i, j, gen, biomeProvider, env, paperWorldConfigCreator, executor);
     }
 
+    //无意义的检查，EntityLookup是支持并发的。
     @Inject(method = "getEntities()Lnet/minecraft/world/level/entity/LevelEntityGetter;", at = @At("HEAD"), cancellable = true)
     public void on(CallbackInfoReturnable<LevelEntityGetter<Entity>> cir) {
         cir.setReturnValue(this.moonrise$getEntityLookup());

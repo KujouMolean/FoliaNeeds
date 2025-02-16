@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerPostRespawnEvent.class)
 public class PlayerPostRespawnEventMixin {
+    //无法实现的API，最好不让调用，否则可能表现不一致。
     @Inject(method = "isBedSpawn", at = @At("HEAD"))
     public void on(CallbackInfoReturnable<Boolean> cir) {
         throw new UnsupportedOperationException();
