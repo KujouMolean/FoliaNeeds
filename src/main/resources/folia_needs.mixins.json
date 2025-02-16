@@ -12,6 +12,7 @@
     "fix.handle.TickThreadMixin",
     "poster.PlayerPostRespawnEventMixin",
     "poster.PlayerPostRespawnEventPoster",
+    "poster.PlayerRespawnEventMixin",
     "poster.TeleportAsyncCallEventPoster"
   ],
   "injectors": {
