@@ -8,6 +8,7 @@
     "fix.conversation.MinecraftServerMixin",
     "fix.conversation.ServerGamePacketListenerImplMixin",
     "fix.entities.ServerLevelMixin",
+    "fix.handle.ProjectileMixin",
     "fix.handle.TickThreadMixin",
     "poster.PlayerPostRespawnEventMixin",
     "poster.PlayerPostRespawnEventPoster",
