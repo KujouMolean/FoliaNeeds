@@ -3,3 +3,4 @@ accessWidener v1 mojang+yarn
 
 # plugin load
 accessible class io/papermc/paper/plugin/manager/PaperPluginInstanceManager
+accessible class net/minecraft/server/level/ServerLevel$EntityCallbacks
