@@ -4,6 +4,7 @@
   "package": "com.molean.folia.needs.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "compatability.BukkitSchedulerMixin",
     "fix.conversation.InactivityConversationCancellerMixin",
     "fix.conversation.MinecraftServerMixin",
     "fix.conversation.ServerGamePacketListenerImplMixin",
