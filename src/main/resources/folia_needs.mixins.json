@@ -11,7 +11,6 @@
     "fix.entities.ServerLevelMixin",
     "fix.handle.ProjectileMixin",
     "fix.handle.TickThreadMixin",
-    "fix.level.ServerLevelMixinEntityCallbacksMixin",
     "poster.PlayerPostRespawnEventMixin",
     "poster.PlayerPostRespawnEventPoster",
     "poster.PlayerRespawnEventMixin",

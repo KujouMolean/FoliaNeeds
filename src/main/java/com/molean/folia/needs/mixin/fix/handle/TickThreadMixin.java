@@ -1,6 +1,7 @@
 package com.molean.folia.needs.mixin.fix.handle;
 
 import ca.spottedleaf.moonrise.common.util.TickThread;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,10 +15,16 @@ public class TickThreadMixin {
 
 
     // 移除过度检查，在PacketLevel需要经常getHandle，仅读取数据，而不作写入，所以去掉检查基本上不影响。
-
     @Inject(method = "ensureTickThread*", at = @At("HEAD"), cancellable = true)
-    private static void on(Entity entity, String reason, CallbackInfo ci) {
+    private static void on1(Entity entity, String reason, CallbackInfo ci) {
         if (reason.equals("Accessing entity state off owning region's thread")) {
+            ci.cancel();
+        }
+    }
+    // 移除过度检查，在PacketLevel需要经常getHandle，仅读取数据，而不作写入，所以去掉检查基本上不影响。
+    @Inject(method = "ensureTickThread*", at = @At("HEAD"), cancellable = true)
+    private static void on2(BlockPos pos, String reason, CallbackInfo ci) {
+        if (reason.equals("Cannot read world asynchronously")) {
             ci.cancel();
         }
     }
