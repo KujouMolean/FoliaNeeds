@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     java
     `maven-publish`
-    id("io.papermc.paperweight.userdev") version "1.7.1"
+    id("io.papermc.paperweight.userdev") version "2.0.0-SNAPSHOT"
     id("com.molean.ignite.access-widener") version "1.0"
     id("io.github.goooler.shadow") version "8.1.7"
 }
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.foliaDevBundle("1.21.4-R0.1-SNAPSHOT")
+    paperweight.foliaDevBundle("1.21.5-R0.1-SNAPSHOT")
 
     compileOnly("space.vectrix.ignite:ignite-api:1.0.1")
     compileOnly("org.spongepowered:mixin:0.8.5")

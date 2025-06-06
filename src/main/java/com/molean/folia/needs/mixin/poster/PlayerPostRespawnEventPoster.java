@@ -20,8 +20,8 @@ public abstract class PlayerPostRespawnEventPoster {
     //做一个简单的call，满足插件的基本功能实现。
     @ModifyVariable(index = 1, method = "respawn(Ljava/util/function/Consumer;Lorg/bukkit/event/player/PlayerRespawnEvent$RespawnReason;)V", at = @At("HEAD"), argsOnly = true)
     public Consumer<ServerPlayer> on(Consumer<ServerPlayer> value) {
-        new PlayerRespawnEvent(getBukkitEntity(), getBukkitEntity().getLocation(), false, false, PlayerRespawnEvent.RespawnReason.DEATH, ImmutableSet.builder()).callEvent();
-        new PlayerPostRespawnEvent(getBukkitEntity(), getBukkitEntity().getLocation(), false).callEvent();
+        new PlayerRespawnEvent(getBukkitEntity(), getBukkitEntity().getLocation(), false, false, false, PlayerRespawnEvent.RespawnReason.PLUGIN).callEvent();
+        new PlayerPostRespawnEvent(getBukkitEntity(), getBukkitEntity().getLocation(), false, false, false, PlayerRespawnEvent.RespawnReason.PLUGIN).callEvent();
         return value;
     }
 }

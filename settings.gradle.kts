@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        includeBuild("build-logic")
         gradlePluginPortal()
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://maven.fabricmc.net/")
