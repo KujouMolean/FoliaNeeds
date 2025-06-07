@@ -7,5 +7,6 @@ public class IgniteAWP implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         ApplyAccessWidenerTask applyTask = project.getTasks().create("applyAccessWidener", ApplyAccessWidenerTask.class);
+        applyTask.setGroup("awp");
     }
 }

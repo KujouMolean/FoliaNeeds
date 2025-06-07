@@ -4,7 +4,7 @@ plugins {
     java
     `maven-publish`
     id("io.papermc.paperweight.userdev") version "2.0.0-SNAPSHOT"
-    id("com.molean.ignite.access-widener") version "1.0"
+    id("isletopia-awp")
     id("io.github.goooler.shadow") version "8.1.7"
 }
 
@@ -16,9 +16,6 @@ repositories {
     // mixin
     maven {
         url = uri("https://repo.spongepowered.org/maven/")
-    }
-    maven {
-        url =uri( "https://maven.moliatopia.icu/repository/maven-snapshots/")
     }
     mavenLocal()
 }
@@ -33,8 +30,6 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
     compileOnly("org.jetbrains:annotations:23.0.0")
-
-//    shadow("com.molean:FoliaAdapter:1.0-SNAPSHOT:dev")
 }
 
 tasks.test {
@@ -49,10 +44,6 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-tasks.named("compileJava") {
-    dependsOn(tasks.named("applyAccessWidener"))
-}
-
 tasks.named<ShadowJar>("shadowJar") {
     minimize {
         exclude(dependency("com.molean:.*:.*"))
@@ -60,3 +51,46 @@ tasks.named<ShadowJar>("shadowJar") {
     configurations = listOf(project.configurations.getByName("shadow"))
     mergeServiceFiles()
 }
+
+
+
+// 禁用自动的Userdev Setup
+tasks.named("paperweightUserdevSetup").configure {
+    enabled = false
+}
+
+gradle.taskGraph.whenReady {
+    tasks.named("paperweightUserdevSetup").configure {
+        enabled = project.hasProperty("setup")
+    }
+}
+
+
+// 新建一个task只在手动执行时运行，确保AW之后的lib不会被覆盖
+abstract class SetupTask : DefaultTask() {
+    @Inject
+    abstract fun getExecOperations(): ExecOperations
+
+    init {
+        // 设置任务组为 "build"
+        group = "awp"
+        description = "第一次构建需要手动初始化dev-bundle"
+
+    }
+
+    @TaskAction
+    fun setup() {
+        getExecOperations().exec {
+            workingDir = project.projectDir
+            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows) {
+                "gradlew.bat"
+            } else {
+                "./gradlew"
+            }
+            args = listOf("paperweightUserdevSetup", "-Psetup")
+        }
+    }
+}
+
+
+tasks.register<SetupTask>("setupDevBundle")
