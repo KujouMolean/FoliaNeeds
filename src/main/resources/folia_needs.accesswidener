@@ -4,3 +4,15 @@ accessWidener v1 mojang+yarn
 # plugin load
 accessible class io/papermc/paper/plugin/manager/PaperPluginInstanceManager
 accessible class net/minecraft/server/level/ServerLevel$EntityCallbacks
+
+#leaves protocols
+accessible field net/minecraft/world/level/storage/loot/LootTable pools Ljava/util/List;
+accessible field net/minecraft/world/level/storage/loot/LootPool entries Ljava/util/List;
+accessible field net/minecraft/world/level/storage/loot/entries/CompositeEntryBase children Ljava/util/List;
+accessible field net/minecraft/world/level/storage/loot/entries/NestedLootTable contents Lcom/mojang/datafixers/util/Either;
+accessible field net/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer conditions Ljava/util/List;
+accessible field net/minecraft/world/entity/animal/armadillo/Armadillo scuteTime I
+accessible method net/minecraft/world/entity/animal/frog/Tadpole getTicksLeftUntilAdult ()I
+accessible field net/minecraft/world/level/storage/loot/predicates/CompositeLootItemCondition terms Ljava/util/List;
+accessible field net/minecraft/world/item/ItemStack components Lnet/minecraft/core/component/PatchedDataComponentMap;
+accessible field io/papermc/paper/threadedregions/RegionizedServer tickCount J
