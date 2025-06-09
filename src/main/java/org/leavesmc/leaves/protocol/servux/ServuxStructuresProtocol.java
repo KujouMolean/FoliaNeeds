@@ -98,7 +98,7 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
         MinecraftServer server = player.getServer();
 
         if (players.containsKey(player.getId()) && server != null) {
-            addChunkTimeoutIfHasReferences(player.getUUID(), chunk, server.getTickCount());
+            addChunkTimeoutIfHasReferences(player.getUUID(), chunk, (int) RegionizedServer.getInstance().tickCount);
         }
     }
 
@@ -145,7 +145,7 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
         tag.putInt("timeout", timeout);
 
         sendPacket(player, new StructuresPayload(StructuresPayloadType.PACKET_S2C_METADATA, tag));
-        initialSyncStructures(player, player.moonrise$getViewDistanceHolder().getViewDistances().sendViewDistance() + 2, server.getTickCount());
+        initialSyncStructures(player, player.moonrise$getViewDistanceHolder().getViewDistances().sendViewDistance() + 2, (int) RegionizedServer.getInstance().tickCount);
     }
 
     public static void initialSyncStructures(ServerPlayer player, int chunkRadius, int tickCounter) {
