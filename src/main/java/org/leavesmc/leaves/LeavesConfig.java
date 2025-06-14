@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer;
 
 public final class LeavesConfig {
     public static ProtocolConfig protocol = new ProtocolConfig();
+    public static ModifyConfig modify = new ModifyConfig();
 
     public static class ProtocolConfig {
         public BladerenConfig bladeren = new BladerenConfig();
@@ -65,5 +66,8 @@ public final class LeavesConfig {
         public boolean reiServerProtocol = true;
         public boolean chatImageProtocol = true;
 
+    }
+    public static class ModifyConfig {
+        public boolean disableDistanceCheckForUseItem = true;
     }
 }

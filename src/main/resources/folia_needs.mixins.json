@@ -33,6 +33,7 @@
     "leaves.p0028.ShulkerBoxBlockEntityMixin",
     "leaves.p0029.BlockItemMixin",
     "leaves.p0029.StandingAndWallBlockItemMixin",
+    "leaves.p0041.ServerGamePacketListenerImplMixin",
     "leaves.p0044.ServerGamePacketListenerImplMixin",
     "leaves.p0091.ServerLevelMixin",
     "leaves.p0113.PlayerListMixin",

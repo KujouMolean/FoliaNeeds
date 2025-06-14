@@ -1,13 +1,13 @@
 package org.leavesmc.leaves.protocol.bladeren;
 
-import io.papermc.paper.threadedregions.*;
-import io.papermc.paper.threadedregions.commands.CommandUtil;
-import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import io.papermc.paper.threadedregions.ThreadedRegionizer;
+import io.papermc.paper.threadedregions.TickData;
+import io.papermc.paper.threadedregions.TickRegionScheduler;
+import io.papermc.paper.threadedregions.TickRegions;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
@@ -18,9 +18,9 @@ import org.leavesmc.leaves.protocol.core.ProtocolHandler;
 import org.leavesmc.leaves.protocol.core.ProtocolUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.OptionalDouble;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @LeavesProtocol.Register(namespace = "bladeren")
 public class MsptSyncProtocol implements LeavesProtocol {
@@ -50,6 +50,11 @@ public class MsptSyncProtocol implements LeavesProtocol {
         players.remove(player);
     }
 
+
+    private static final Cache<Long, Pair<Double, Double>> cache = CacheBuilder.newBuilder()
+            .expireAfterWrite(5, TimeUnit.SECONDS)
+            .build();
+
     @ProtocolHandler.Ticker
     public static void tick() {
         if (players.isEmpty()) {
@@ -61,25 +66,32 @@ public class MsptSyncProtocol implements LeavesProtocol {
                 if (currentRegion == null) {
                     return;
                 }
-                TickData.TickReportData reportData = currentRegion.getData().getRegionSchedulingHandle().getTickReport5s(System.nanoTime());
-                if (reportData == null) {
-                    return;
+                long id = currentRegion.id;
+                Pair<Double, Double> data = Pair.of(0d, 0d);
+                try {
+                    data = cache.get(id, () -> {
+                        TickData.TickReportData reportData = currentRegion.getData().getRegionSchedulingHandle().getTickReport5s(System.nanoTime());
+                        if (reportData == null) {
+                            return Pair.of(0d, 0d);
+                        }
+                        TickData.SegmentedAverage segmentedAverage = reportData.tpsData();
+                        if (segmentedAverage == null) {
+                            return Pair.of(0d, 0d);
+                        }
+                        final double tps = segmentedAverage.segmentAll().average();
+                        final double mspt = reportData.timePerTickData().segmentAll().average() / 1.0E6;
+                        return Pair.of(tps, mspt);
+
+                    });
+                } catch (ExecutionException ignored) {
                 }
-                TickData.SegmentedAverage segmentedAverage = reportData.tpsData();
-                if (segmentedAverage == null) {
-                    return;
-                }
-                final double tps = segmentedAverage.segmentAll().average();
-                final double mspt = reportData.timePerTickData().segmentAll().average() / 1.0E6;
+                Pair<Double, Double> finalData = data;
                 ProtocolUtils.sendBytebufPacket(serverPlayer, MSPT_SYNC, buf -> {
-                    buf.writeDouble(mspt);
-                    buf.writeDouble(tps);
+                    buf.writeDouble(finalData.value());
+                    buf.writeDouble(finalData.key());
                 });
             }, null);
-
         });
-
-
     }
 
     public static void onPlayerSubmit(@NotNull ServerPlayer player) {

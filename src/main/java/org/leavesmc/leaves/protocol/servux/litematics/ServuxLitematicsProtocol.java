@@ -20,6 +20,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.leavesmc.leaves.LeavesConfig;
@@ -239,19 +240,19 @@ public class ServuxLitematicsProtocol implements LeavesProtocol {
             long timeStart = System.currentTimeMillis();
             SchematicPlacement placement = SchematicPlacement.createFromNbt(tags);
             ReplaceBehavior replaceMode = ReplaceBehavior.fromStringStatic(tags.getStringOr("ReplaceMode", ReplaceBehavior.NONE.name()));
-            MinecraftServer.getServer().scheduleOnMain(() -> {
+            player.getBukkitEntity().getScheduler().run(Bukkit.getPluginManager().getPlugins()[0], scheduledTask -> {
                 placement.pasteTo(serverLevel, replaceMode);
                 long timeElapsed = System.currentTimeMillis() - timeStart;
                 player.getBukkitEntity().sendActionBar(
-                    Component.text("Pasted ")
-                        .append(Component.text(placement.getName(), NamedTextColor.AQUA))
-                        .append(Component.text(" to world "))
-                        .append(Component.text(serverLevel.serverLevelData.getLevelName(), NamedTextColor.LIGHT_PURPLE))
-                        .append(Component.text(" in "))
-                        .append(Component.text(timeElapsed, NamedTextColor.GREEN))
-                        .append(Component.text("ms"))
+                        Component.text("Pasted ")
+                                .append(Component.text(placement.getName(), NamedTextColor.AQUA))
+                                .append(Component.text(" to world "))
+                                .append(Component.text(serverLevel.serverLevelData.getLevelName(), NamedTextColor.LIGHT_PURPLE))
+                                .append(Component.text(" in "))
+                                .append(Component.text(timeElapsed, NamedTextColor.GREEN))
+                                .append(Component.text("ms"))
                 );
-            });
+            }, null);
         }
     }
 
