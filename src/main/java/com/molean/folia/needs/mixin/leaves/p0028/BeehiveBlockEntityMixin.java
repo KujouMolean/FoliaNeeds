@@ -7,6 +7,7 @@ import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,7 +36,7 @@ public class BeehiveBlockEntityMixin {
     }
 
     @Inject(method = "loadAdditional", at = @At("TAIL"))
-    public void on(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+    public void on(ValueInput input, CallbackInfo ci) {
         // Leaves start - pca
         if (org.leavesmc.leaves.LeavesConfig.protocol.pca.enable) {
             org.leavesmc.leaves.protocol.PcaSyncProtocol.syncBlockEntityToClient((BeehiveBlockEntity) (Object) this);

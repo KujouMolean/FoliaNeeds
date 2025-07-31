@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CraftServer.class)
-public class CraftSeverMixin {
+public class C1_CraftSeverMixin {
     @Inject(method = "<init>", at = @At("TAIL"))
     public void on(DedicatedServer console, PlayerList playerList, CallbackInfo ci) {
         org.leavesmc.leaves.protocol.core.LeavesProtocolManager.init(); // Leaves - protocol

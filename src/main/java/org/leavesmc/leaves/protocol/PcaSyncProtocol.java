@@ -31,6 +31,7 @@ import org.leavesmc.leaves.protocol.core.LeavesCustomPayload;
 import org.leavesmc.leaves.protocol.core.LeavesProtocol;
 import org.leavesmc.leaves.protocol.core.ProtocolHandler;
 import org.leavesmc.leaves.protocol.core.ProtocolUtils;
+import org.leavesmc.leaves.util.TagUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,9 +82,8 @@ public class PcaSyncProtocol implements LeavesProtocol {
 
     @ProtocolHandler.PayloadReceiver(payload = SyncBlockEntityPayload.class)
     private static void syncBlockEntityHandler(ServerPlayer player, SyncBlockEntityPayload payload) {
-        MinecraftServer server = MinecraftServer.getServer();
         BlockPos pos = payload.pos;
-        ServerLevel world = player.serverLevel();
+        ServerLevel world = player.level();
 
         Plugin plugin = Bukkit.getPluginManager().getPlugins()[0];
         player.getBukkitEntity().getScheduler().run(plugin, scheduledTask -> {
@@ -129,7 +129,7 @@ public class PcaSyncProtocol implements LeavesProtocol {
     private static void syncEntityHandler(ServerPlayer player, SyncEntityPayload payload) {
         MinecraftServer server = MinecraftServer.getServer();
         int entityId = payload.entityId;
-        ServerLevel world = player.serverLevel();
+        ServerLevel world = player.level();
 
         Plugin plugin = Bukkit.getPluginManager().getPlugins()[0];
         player.getBukkitEntity().getScheduler().run(plugin, scheduledTask -> {
@@ -199,7 +199,7 @@ public class PcaSyncProtocol implements LeavesProtocol {
     }
 
     public static void updateEntity(@NotNull ServerPlayer player, @NotNull Entity entity) {
-        CompoundTag nbt = entity.saveWithoutId(new CompoundTag());
+        CompoundTag nbt = TagUtil.saveEntity(entity);
         ProtocolUtils.sendPayloadPacket(player, new UpdateEntityPayload(entity.level().dimension().location(), entity.getId(), nbt));
     }
 

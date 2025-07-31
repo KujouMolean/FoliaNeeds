@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "net.minecraft.network.protocol.common.custom.CustomPacketPayload$1")
-public abstract class CustomPacketPayloadMixin {
+public abstract class C1_CustomPacketPayloadMixin {
 
     @Shadow protected abstract StreamCodec<FriendlyByteBuf, ? extends CustomPacketPayload> findCodec(ResourceLocation par1);
 

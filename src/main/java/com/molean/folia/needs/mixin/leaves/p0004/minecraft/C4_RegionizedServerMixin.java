@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RegionizedServer.class)
-public abstract class RegionizedServerMixin {
+public abstract class C4_RegionizedServerMixin {
     @Shadow public long tickCount;
 
     @Inject(method = "globalTick(I)V", at = @At(value = "TAIL"))

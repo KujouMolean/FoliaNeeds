@@ -10,6 +10,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nullable;
+
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin {
     @Shadow public abstract Block getBlock();
@@ -18,28 +20,34 @@ public abstract class BlockItemMixin {
 
     @Inject(method = "getPlacementState", at = @At(value = "HEAD"), cancellable = true)
     public void on(BlockPlaceContext context, CallbackInfoReturnable<BlockState> cir) {
-        BlockState stateForPlacement = this.getBlock().getStateForPlacement(context);
-        // Leaves start - alternativeBlockPlacement
+        BlockState stateForPlacement = getRealStateForPlacement(context, this.getBlock()); // Leaves - alternativeBlockPlacement
+        cir.setReturnValue(stateForPlacement != null && this.canPlace(context, stateForPlacement) ? stateForPlacement : null);
+    }
+
+    // Leaves start - alternativeBlockPlacement
+    @Nullable
+    public BlockState getRealStateForPlacement(BlockPlaceContext ctx,Block block) {
+        BlockState vanillaState = block.getStateForPlacement(ctx);
         switch (org.leavesmc.leaves.LeavesConfig.protocol.alternativeBlockPlacement) {
             case CARPET -> {
-                BlockState tryState = org.leavesmc.leaves.protocol.CarpetAlternativeBlockPlacement.alternativeBlockPlacement(getBlock(), context);
+                BlockState tryState = org.leavesmc.leaves.protocol.CarpetAlternativeBlockPlacement.alternativeBlockPlacement(block, ctx);
                 if (tryState != null) {
-                    stateForPlacement = tryState;
+                    return tryState;
                 }
             }
             case CARPET_FIX -> {
-                BlockState tryState = org.leavesmc.leaves.protocol.CarpetAlternativeBlockPlacement.alternativeBlockPlacementFix(getBlock(), context);
+                BlockState tryState = org.leavesmc.leaves.protocol.CarpetAlternativeBlockPlacement.alternativeBlockPlacementFix(block, ctx);
                 if (tryState != null) {
-                    stateForPlacement = tryState;
+                    return tryState;
                 }
             }
             case LITEMATICA -> {
-                if (stateForPlacement != null && this.canPlace(context, stateForPlacement)) {
-                    cir.setReturnValue(org.leavesmc.leaves.protocol.LitematicaEasyPlaceProtocol.applyPlacementProtocol(stateForPlacement, context));
+                if (vanillaState != null) {
+                    return org.leavesmc.leaves.protocol.LitematicaEasyPlaceProtocol.applyPlacementProtocol(vanillaState, ctx);
                 }
             }
         }
-        // Leaves end - alternativeBlockPlacement
-        cir.setReturnValue(stateForPlacement != null && this.canPlace(context, stateForPlacement) ? stateForPlacement : null);
+        return vanillaState;
     }
+    // Leaves end - alternativeBlockPlacement
 }

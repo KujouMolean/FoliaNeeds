@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.foliaDevBundle("1.21.5-R0.1-SNAPSHOT")
+    paperweight.foliaDevBundle("1.21.8-R0.1-SNAPSHOT")
 
     compileOnly("space.vectrix.ignite:ignite-api:1.0.1")
     compileOnly("org.spongepowered:mixin:0.8.5")
@@ -52,45 +52,8 @@ tasks.named<ShadowJar>("shadowJar") {
     mergeServiceFiles()
 }
 
-
-
-// 禁用自动的Userdev Setup
-tasks.named("paperweightUserdevSetup").configure {
-    enabled = false
-}
-
 gradle.taskGraph.whenReady {
     tasks.named("paperweightUserdevSetup").configure {
         enabled = project.hasProperty("setup")
     }
 }
-
-
-// 新建一个task只在手动执行时运行，确保AW之后的lib不会被覆盖
-abstract class SetupTask : DefaultTask() {
-    @Inject
-    abstract fun getExecOperations(): ExecOperations
-
-    init {
-        // 设置任务组为 "build"
-        group = "awp"
-        description = "第一次构建需要手动初始化dev-bundle"
-
-    }
-
-    @TaskAction
-    fun setup() {
-        getExecOperations().exec {
-            workingDir = project.projectDir
-            executable = if (org.gradle.internal.os.OperatingSystem.current().isWindows) {
-                "gradlew.bat"
-            } else {
-                "./gradlew"
-            }
-            args = listOf("paperweightUserdevSetup", "-Psetup")
-        }
-    }
-}
-
-
-tasks.register<SetupTask>("setupDevBundle")

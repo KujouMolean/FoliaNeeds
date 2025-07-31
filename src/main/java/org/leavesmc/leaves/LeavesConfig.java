@@ -1,6 +1,9 @@
 package org.leavesmc.leaves;
 
 import net.minecraft.server.MinecraftServer;
+import org.leavesmc.leaves.protocol.servux.logger.DataLogger;
+
+import java.util.List;
 
 public final class LeavesConfig {
     public static ProtocolConfig protocol = new ProtocolConfig();
@@ -48,12 +51,20 @@ public final class LeavesConfig {
             public boolean entityProtocol = true;
             public boolean hudMetadataProtocol = true;
             public boolean hudMetadataShareSeed = true;
-            public boolean litematicsProtocol = true;
+            public boolean hudLoggerProtocol = true;
+            public List<DataLogger.Type> hudEnabledLoggers = List.of(DataLogger.Type.TPS, DataLogger.Type.MOB_CAPS);
+            public int hudUpdateInterval = 1;
+            public LitematicsConfig litematics = new LitematicsConfig();
+
+            public static class LitematicsConfig {
+                public boolean enable = true;
+                public long maxNbtSize = 2097152;
+            }
         }
 
         public boolean bborProtocol = true;
         public boolean jadeProtocol = true;
-        public AlternativePlaceType alternativeBlockPlacement = AlternativePlaceType.LITEMATICA;
+        public AlternativePlaceType alternativeBlockPlacement = AlternativePlaceType.CARPET_FIX;
 
         public enum AlternativePlaceType {
             NONE, CARPET, CARPET_FIX, LITEMATICA
@@ -67,6 +78,7 @@ public final class LeavesConfig {
         public boolean chatImageProtocol = true;
 
     }
+
     public static class ModifyConfig {
         public boolean disableDistanceCheckForUseItem = true;
     }

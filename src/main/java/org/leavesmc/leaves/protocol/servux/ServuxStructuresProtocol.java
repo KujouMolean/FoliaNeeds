@@ -49,12 +49,13 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
     private static final Map<UUID, Map<ChunkPos, Timeout>> timeouts = new HashMap<>();
     private static int retainDistance;
 
+    @ProtocolHandler.PlayerJoin
+    public static void onPlayerJoin(ServerPlayer player) {
+        sendMetaData(player);
+    }
+
     @ProtocolHandler.PayloadReceiver(payload = StructuresPayload.class)
     public static void onPacketReceive(ServerPlayer player, StructuresPayload payload) {
-        if (!LeavesConfig.protocol.servux.structureProtocol) {
-            return;
-        }
-
         switch (payload.packetType()) {
             case PACKET_C2S_STRUCTURES_REGISTER -> onPlayerSubscribed(player);
             case PACKET_C2S_REQUEST_SPAWN_METADATA -> ServuxHudDataProtocol.refreshSpawnMetadata(player); // move to
@@ -64,39 +65,25 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
 
     @ProtocolHandler.PlayerLeave
     public static void onPlayerLoggedOut(@NotNull ServerPlayer player) {
-        if (!LeavesConfig.protocol.servux.structureProtocol) {
-            return;
-        }
-
         players.remove(player.getId());
+        timeouts.remove(player.getUUID());
     }
 
     @ProtocolHandler.Ticker
     public static void tick() {
-        if (!LeavesConfig.protocol.servux.structureProtocol) {
-            return;
-        }
-
         MinecraftServer server = MinecraftServer.getServer();
         int tickCounter = (int) RegionizedServer.getInstance().tickCount;
-        if ((tickCounter % updateInterval) == 0) {
-            retainDistance = server.getPlayerList().getViewDistance() + 2;
-            for (ServerPlayer player : players.values()) {
-                // TODO DimensionChange
-                player.getBukkitEntity().getScheduler().run(Bukkit.getPluginManager().getPlugins()[0], scheduledTask -> {
-                    refreshTrackedChunks(player, tickCounter);
-                }, null);
-            }
+        retainDistance = server.getPlayerList().getViewDistance() + 2;
+        for (ServerPlayer player : players.values()) {
+            // TODO DimensionChange
+            player.getBukkitEntity().getScheduler().run(Bukkit.getPluginManager().getPlugins()[0], scheduledTask -> {
+                refreshTrackedChunks(player, tickCounter);
+            }, null);
         }
     }
 
     public static void onStartedWatchingChunk(ServerPlayer player, LevelChunk chunk) {
-        if (!LeavesConfig.protocol.servux.structureProtocol) {
-            return;
-        }
-
         MinecraftServer server = player.getServer();
-
         if (players.containsKey(player.getId()) && server != null) {
             addChunkTimeoutIfHasReferences(player.getUUID(), chunk, (int) RegionizedServer.getInstance().tickCount);
         }
@@ -137,6 +124,10 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
         }
 
         MinecraftServer server = MinecraftServer.getServer();
+        sendMetaData(player);
+    }
+
+    private static void sendMetaData(ServerPlayer player) {
         CompoundTag tag = new CompoundTag();
         tag.putString("name", "structure_bounding_boxes");
         tag.putString("id", StructuresPayload.CHANNEL.toString());
@@ -151,7 +142,7 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
     public static void initialSyncStructures(ServerPlayer player, int chunkRadius, int tickCounter) {
         UUID uuid = player.getUUID();
         ChunkPos center = player.getLastSectionPos().chunk();
-        Map<Structure, LongSet> references = getStructureReferences(player.serverLevel(), center, chunkRadius);
+        Map<Structure, LongSet> references = getStructureReferences(player.level(), center, chunkRadius);
 
         timeouts.remove(uuid);
 
@@ -195,7 +186,7 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
     }
 
     public static void sendStructures(ServerPlayer player, Map<Structure, LongSet> references, int tickCounter) {
-        ServerLevel world = player.serverLevel();
+        ServerLevel world = player.level();
         Map<ChunkPos, StructureStart> starts = getStructureStarts(world, references);
 
         if (!starts.isEmpty()) {
@@ -274,7 +265,7 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
         }
 
         if (!positionsToUpdate.isEmpty()) {
-            ServerLevel world = player.serverLevel();
+            ServerLevel world = player.level();
             ChunkPos center = player.getLastSectionPos().chunk();
             Map<Structure, LongSet> references = new HashMap<>();
 
@@ -314,10 +305,6 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
     }
 
     public static void sendPacket(ServerPlayer player, StructuresPayload payload) {
-        if (!LeavesConfig.protocol.servux.structureProtocol) {
-            return;
-        }
-
         if (payload.packetType() == StructuresPayloadType.PACKET_S2C_STRUCTURE_DATA_START) {
             FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
             buffer.writeNbt(payload.nbt());
@@ -329,6 +316,11 @@ public class ServuxStructuresProtocol implements LeavesProtocol {
 
     private static void sendWithSplitter(ServerPlayer player, FriendlyByteBuf buf) {
         sendPacket(player, new StructuresPayload(StructuresPayloadType.PACKET_S2C_STRUCTURE_DATA, buf));
+    }
+
+    @Override
+    public int tickerInterval(String tickerID) {
+        return updateInterval;
     }
 
     @Override

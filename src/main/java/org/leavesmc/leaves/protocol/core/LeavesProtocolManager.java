@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -219,27 +218,27 @@ public class LeavesProtocolManager {
         codec.encode(ProtocolUtils.decorate(buf), payload);
     }
 
-    public static void handlePayload(ServerPlayer player, LeavesCustomPayload payload) {
+    public static void handlePayload(IdentifierSelector selector, LeavesCustomPayload payload) {
         PayloadReceiverInvokerHolder holder;
         if ((holder = PAYLOAD_RECEIVERS.get(payload.getClass())) != null) {
-            holder.invoke(player, payload);
+            holder.invoke(selector, payload);
         }
     }
 
-    public static boolean handleBytebuf(ServerPlayer player, ResourceLocation location, ByteBuf buf) {
+    public static boolean handleBytebuf(IdentifierSelector selector, ResourceLocation location, ByteBuf buf) {
         RegistryFriendlyByteBuf buf1 = ProtocolUtils.decorate(buf);
         BytebufReceiverInvokerHolder holder;
         if ((holder = STRICT_BYTEBUF_RECEIVERS.get(location.toString())) != null) {
-            holder.invoke(player, buf1);
+            holder.invoke(selector, buf1);
             return true;
         }
         if ((holder = NAMESPACED_BYTEBUF_RECEIVERS.get(location.getNamespace())) != null) {
-            if (holder.invoke(player, buf1)) {
+            if (holder.invoke(selector, buf1)) {
                 return true;
             }
         }
         for (var holder1 : GENERIC_BYTEBUF_RECEIVERS) {
-            if (holder1.invoke(player, buf1)) {
+            if (holder1.invoke(selector, buf1)) {
                 return true;
             }
         }
@@ -279,22 +278,22 @@ public class LeavesProtocolManager {
         }
     }
 
-    public static void handleMinecraftRegister(String channelId, ServerPlayer player) {
+    public static void handleMinecraftRegister(String channelId, IdentifierSelector selector) {
         ResourceLocation location = ResourceLocation.tryParse(channelId);
         if (location == null) {
             return;
         }
 
         for (var wildHolder : WILD_MINECRAFT_REGISTER) {
-            wildHolder.invoke(player, location);
+            wildHolder.invoke(selector, location);
         }
 
         MinecraftRegisterInvokerHolder holder;
         if ((holder = STRICT_MINECRAFT_REGISTER.get(location.toString())) != null) {
-            holder.invoke(player, location);
+            holder.invoke(selector, location);
         }
         if ((holder = NAMESPACED_MINECRAFT_REGISTER.get(location.getNamespace())) != null) {
-            holder.invoke(player, location);
+            holder.invoke(selector, location);
         }
     }
 
@@ -311,9 +310,8 @@ public class LeavesProtocolManager {
             }
         });
         ProtocolUtils.sendBytebufPacket(player, ResourceLocation.fromNamespaceAndPath("minecraft", "register"), buf -> {
-            ResourceLocation channel;
-            for (Iterator<String> var3 = set.iterator(); var3.hasNext(); buf.writeBytes(channel.toString().getBytes(StandardCharsets.US_ASCII))) {
-                channel = ResourceLocation.parse(var3.next());
+            for (String channel : set) {
+                buf.writeBytes(channel.getBytes(StandardCharsets.US_ASCII));
                 buf.writeByte(0);
             }
             buf.writerIndex(Math.max(buf.writerIndex() - 1, 0));
